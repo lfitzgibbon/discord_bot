@@ -14,7 +14,9 @@ from app.tasks.birthday_messages import construct_birthday_message
 async def send_birthday_alerts() -> None:
     ''' Send out birthday alerts at midnight '''
     # Sleep until it is time to send alerts
-    await asyncio.sleep(seconds_until_midnight())
+    # Add a bit of margin to account for float rounding errors - I've seen this go
+    # off at 23:59:59.991 some days
+    await asyncio.sleep(seconds_until_midnight() + 10)
 
     logging.info("Searching for birthdays.")
 
