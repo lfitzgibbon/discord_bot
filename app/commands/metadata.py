@@ -1,5 +1,20 @@
 # Documentation on the different commands, to be displayed when the "help" command is used
 COMMAND_INFO = {
+    "birthday": {
+        "args": [
+            {
+                "name": "birthday",
+                "des": "Birthday to register to user. Format YYYY-mm-dd.",
+                "required": True
+            },
+            {
+                "name": "user",
+                "des": "User to register birthday to. Can either be a mention or their name in plain text. If not given, will register birthday to current user.",
+                "required": False
+            }
+        ],
+        "des": "Register a user's birthday. Subsequent calls to register to same user will override previous submission."
+    },
     "choose": {
         "args": [
             {

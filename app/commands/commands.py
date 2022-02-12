@@ -5,6 +5,7 @@ from discord.ext.commands.context import Context
 
 from app import BOT
 from app.commands.metadata import COMMAND_INFO, build_command_help_msg
+from app.database.repositories.birthday import BirthdayRepository
 
 
 # Remove the default help command, so that we can register our own
@@ -24,8 +25,30 @@ async def help(ctx: Context, command: str = None) -> None:
     
     await ctx.channel.send(f"```\n{help_msg}\n```")
 
+@BOT.command(name="birthday")
+async def register_birthday(ctx: Context, birthday: str, *user: str) -> None:
+    ''' Register the given birthday to either the current or given user '''
+    # Validate that the user has given a birthday, and that the birthday is valid
+    try:
+        parsed_birthday = datetime.strptime(birthday, "%Y-%m-%d")
+    except ValueError:
+        await ctx.send("Incorrect date format, use 'YY-mm-dd'.")
+        return
+
+    user = " ".join(user) if user else ctx.message.author.mention
+    server_id = ctx.guild.id
+    channel_id = ctx.channel.id
+
+    bday_repo = BirthdayRepository()
+    bday_repo.register(user, parsed_birthday, server_id, channel_id)
+
+    # TODO: it'd be cute if it also returned the number of days until next bday
+    # Leaps years might make that weird though
+    await ctx.channel.send("Birthday has been successfully registered!")
+
 @BOT.command(name="choose")
 async def choose_idea(ctx: Context, after: str = None) -> None:
+    ''' Choses a random option from those provided in the current channel '''
     choice_prefix = "idea"
 
     # Attempt to parse the date that was given, if applicable
@@ -33,7 +56,7 @@ async def choose_idea(ctx: Context, after: str = None) -> None:
         try:
             after = datetime.strptime(after, "%Y-%m-%d")
         except ValueError:
-            await ctx.channel.send("Incorrect date format, use 'YYYY-mm-dd'")
+            await ctx.channel.send("Incorrect date format, use 'YYYY-mm-dd'.")
             return
 
     # Retrieve the message history, only saving those that start with the magic phrase
