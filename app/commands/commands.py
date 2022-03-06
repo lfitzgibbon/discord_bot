@@ -32,7 +32,7 @@ async def register_birthday(ctx: Context, birthday: str, *user: str) -> None:
     try:
         parsed_birthday = datetime.strptime(birthday, "%Y-%m-%d")
     except ValueError:
-        await ctx.send("Incorrect date format, use 'YY-mm-dd'.")
+        await ctx.send("Incorrect date format, use 'YYYY-mm-dd'.")
         return
 
     user = " ".join(user) if user else ctx.message.author.mention
