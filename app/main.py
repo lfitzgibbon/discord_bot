@@ -2,9 +2,8 @@ import os
 import sys
 import logging
 
-from mongoengine import connect
-
 from app import BOT
+from app.database import db_connect
 from app.tasks.tasks import start_tasks
 
 
@@ -14,8 +13,8 @@ if __name__ == "__main__":
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
-    # TODO: this should be in the database module and have better configurability
-    connect("lilybot")
+    # Establish a connection to the database
+    db_connect()
 
     token = os.getenv("LILYBOT_TOKEN")
     if not token:
