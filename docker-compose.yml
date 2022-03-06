@@ -1,0 +1,36 @@
+version: '3'
+services:
+  discord_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: discord_bot:latest
+    container_name: discord_bot
+    restart: unless-stopped
+    environment:
+      - LILYBOT_TOKEN=TOKEN
+      - LILYBOT_DB_HOST=mongodb
+      - LILYBOT_DB_NAME=lilybot
+      - LILYBOT_DB_USER=DB_USER
+      - LILYBOT_DB_PASS=DB_PASS
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  mongodb:
+    image: mongo:5.0.6-focal
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      - MONGODB_DATA_DIR=/data/db
+    volumes:
+      - ./data:/data/db
+    networks:
+      - backend
+
+  # TODO: add mongo express service
+
+networks:
+  backend:
+    driver: bridge
