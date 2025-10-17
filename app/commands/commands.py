@@ -11,6 +11,18 @@ from app.database.repositories.birthday import BirthdayRepository
 # Remove the default help command, so that we can register our own
 BOT.remove_command("help")
 
+@BOT.listen()
+async def on_message(message):
+    """Special message handling that is not covered by prefixed commands"""
+    if message.author == BOT.user:
+        return
+
+    # If the message only has the word "sneeze" in it, determine if the person is worthy of being blessed
+    unique_words = set(message.content.lower().split())
+    if unique_words == {"sneeze"} and random.randint(1, 20) == 20:
+        await message.channel.send('bless you 🙏')
+
+
 @BOT.command("help")
 async def help(ctx: Context, command: str = None) -> None:
     if metadata := COMMAND_INFO.get(command):
